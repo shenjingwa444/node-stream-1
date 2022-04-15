@@ -1,0 +1,6 @@
+const {Readable} = require('stream')
+const inStream = new Readable()
+inStream.push("abcdefjhijklm")
+inStream.push('nopqrstuvwxyz')
+inStream.push(null)
+inStream.pipe(process.stdout)
