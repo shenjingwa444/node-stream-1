@@ -2,7 +2,7 @@ const fs = require('fs')
 const zlib = require('zlib')
 const file = process.argv[2]
 const {Transform} = require('stream')
-
+const crypto = require('crypto')
 const reportProcess = new Transform({
   transform(chunk,encoding,callback){
     process.stdout.write('.')
@@ -12,9 +12,10 @@ const reportProcess = new Transform({
 })
 
 fs.createReadStream(file)
+  //加密方式为 aes192，秘钥为 123456
+  //先加密，再压缩
+  .pipe(crypto.createCipher('aes192','123456'))
   .pipe(zlib.createGzip())
-  //每次来数据，就打一个 '.' ，然后将数据原封不动的传给下一个
-  //这样可以对数据进行无限的处理，很像 webpack 的 loader
   .pipe(reportProcess)
   .pipe(fs.createWriteStream(file + ".zz"))
   .on('finish',()=>console.log('done'))
